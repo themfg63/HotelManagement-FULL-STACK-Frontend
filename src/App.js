@@ -1,5 +1,10 @@
 import logo from './logo.svg';
 import './App.css';
+import React from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import Navbar from './component/common/Navbar';
+import FooterComponent from './component/common/Footer';
+
 
 function App() {
   return (
