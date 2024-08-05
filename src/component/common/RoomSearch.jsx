@@ -61,7 +61,7 @@ const RoomSearch = ({ handleSearchResult }) => {
     <section>
       <div className="search-container">
         <div className="search-field">
-          <label>Check-in Date</label>
+          <label>Giriş Tarihi</label>
           <DatePicker
             selected={startDate}
             onChange={(date) => setStartDate(date)}
@@ -70,7 +70,7 @@ const RoomSearch = ({ handleSearchResult }) => {
           />
         </div>
         <div className="search-field">
-          <label>Check-out Date</label>
+          <label>Çıkış Tarihi</label>
           <DatePicker
             selected={endDate}
             onChange={(date) => setEndDate(date)}
@@ -80,7 +80,7 @@ const RoomSearch = ({ handleSearchResult }) => {
         </div>
 
         <div className="search-field">
-          <label>Room Type</label>
+          <label>Oda Tipi</label>
           <select value={roomType} onChange={(e) => setRoomType(e.target.value)}>
             <option disabled value="">
               Oda Tipi Seçin
