@@ -93,7 +93,131 @@ const RoomDetailsPage = () => {
             if(response.statusCode === 200){
                 setConfirmationCode(response.bookingConfirmationCode);
                 setShowMessage(true);
+                
+                setTimeout(() => {
+                   setShowMessage(false);
+                   navigate('/rooms'); 
+                }, 10000);
             }
+        }catch(error) {
+            setErrorMessage(error.response?.data?.message || error.message);
+            setTimeout(() => setErrorMessage(''),5000);
         }
+    };
+
+    if(isLoading){
+        return <p className="room-detail-loading">Oda Detayları Yükleniyor...</p>;
     }
-}
+
+    if(error){
+        return <p className="room-detail-loading">{error}</p>;
+    }
+
+    if(!roomDetails){
+        return <p className="room-detail-loading">Oda Bulunamadı!</p>;
+    }
+
+    const {roomType, roomPrice, roomPhotoUrl, description, bookings} = roomDetails;
+
+    return(
+        <div className="room-details-booking">
+            {showMessage && (
+                <p className="booking-success-message">
+                    Rezervasyon başarılı! Onay Kodu: {confirmationCode} z. Rezervasyon detaylarınızın yer aldığı bir Sms ve e-posta size gönderildi
+                </p>
+            )}
+            {errorMessage && (
+                <p className="error-message">
+                    {errorMessage}
+                </p>
+            )}
+            <h2>Oda Detayları</h2>
+            <br />
+
+            <img src={roomPhotoUrl} alt={roomType} className="room-details-image" />
+            <div className="room-details-info">
+                <h3>{roomType}</h3>
+                <p>Fiyat: {roomPrice} TL / Gece</p>
+                <p>{description}</p>
+            </div>
+
+            {bookings && bookings.lenght > 0 && (
+                <div>
+                    <h3>Mevcut Rezervasyon Bilgileri</h3>
+                    <ul className="booking-list">
+                        {bookings.map((booking,index) => (
+                            <li key={booking.id} className="booking-item">
+                                <span className="booking-number">Rezervasyon No: {index + 1 }</span>
+                                <span className="booking-text">Giriş Tarihi: {booking.checkInDate}</span>
+                                <span className="booking-text">Çıkış Tarihi: {booking.checkOutDate} </span>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )}
+            <div className="booking-info">
+                <button className="book-now-button" onClick={() => setShowDatePicker(true)}>Anında Rezervasyon</button>
+                <button className="go-back-button" onClick={() => setShowDatePicker(false)}>Geri Dön</button>
+
+                {showDatePicker && (
+                    <div className="detail-picker-container">
+                        <DatePicker
+                            className="detail-search-field"
+                            selected={checkInDate}
+                            onChange={(date) => setCheckInDate(date)}
+                            selectsStart
+                            startDate={checkInDate}
+                            endDate={checkOutDate}
+                            placeholderText="Giriş Tarihi"
+                            dateFormat="dd/MM/yyyy"
+                        />
+                        <DatePicker
+                            className="detail-search-field"
+                            selected={checkOutDate}
+                            onChange={(date) => setCheckOutDate(date)}
+                            selectsStart
+                            startDate={checkInDate}
+                            endDate={checkOutDate}
+                            minDate={checkInDate}
+                            placeholderText="Çıkış Tarihi"
+                            dateFormat="dd/MM/yyyy"
+                        />
+
+                        <div className="guest-container">
+                            <div className="guest-div">
+                                <label>Yetişkin: </label>
+                                <input
+                                    type="number"
+                                    min="1"
+                                    value={numAdults}
+                                    onChange={(e) => setNumAdults(parseInt(e.target.value))}
+                                />
+                            </div>
+                            <div className="guest-div">
+                                <label>Çocuk: </label>
+                                <input
+                                    type="number"
+                                    min="0"
+                                    value={numChildren}
+                                    onChange={(e) => setNumChildren(parseInt(e.target.value))}
+                                />
+                            </div>
+                            <button className="confirm-booking" onClick={handleConfirmBooking}>Rezervasyonu Doğrula</button>
+                        </div>
+                    </div>
+                )}
+
+                {totalPrice > 0&& (
+                    <div className="total-price">
+                        <p>Toplam Fiyat: {totalPrice} TL</p>
+                        <p>Misafir Sayısı: {totalGuests}</p>
+                        <button onClick={acceptBooking} className="accept-booking">Rezervasyonu Onayla</button>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+    
+};
+
+export default RoomDetailsPage;
